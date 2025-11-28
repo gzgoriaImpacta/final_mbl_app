@@ -4,6 +4,7 @@ import { Button, StyleSheet, Text, View } from "react-native";
 import * as service from '../services/user.service';
 import MyInput from '../components/MyInput';
 import { User } from "../model";
+import { Role } from "../model";
 import { NavigationProp, useNavigation, useRoute } from "@react-navigation/native";
 
 export default function UserPage() {
@@ -19,10 +20,19 @@ export default function UserPage() {
     const [username, setUsername] = React.useState(user ? user.username : '')
     const [password, setPassword] = React.useState('')
     const [confirmPassword, setConfirmPassword] = React.useState('')
+    const [listRoles, setListRoles] = React.useState<Role[]>([])
+    const [roles, setRoles] = React.useState<string[]>([])
 
     React.useEffect(() => {
         navigation.setOptions({ title: user ? 'Editar Usuário' : 'Novo Usuário' })
     }, [])
+
+    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selecionadas = Array.from(event.target.selectedOptions).map(
+            (opt) => opt.value
+        )
+        setRoles(selecionadas)
+    }
 
     function save() {
         if (name === '') {
@@ -72,10 +82,14 @@ export default function UserPage() {
                     <MyInput label="Senha" onChangeText={setPassword} secureTextEntry />
                     <MyInput label="Confirmar Senha" onChangeText={setConfirmPassword} secureTextEntry />
                 </>
-            ) }
+            ) }          
+
+
 
             <View style={styles.buttonContainer}>
                 <Button title="Salvar" onPress={save} />
+                <Button title="Cancelar" onPress={() => navigation.goBack()} />
+                <Button title="Criar Role" onPress={() => navigation.navigate('role')} />
             </View>
         </View>
     )
