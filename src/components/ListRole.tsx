@@ -1,27 +1,29 @@
 import React from 'react'
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, StyleSheet, Text, View, TouchableOpacity, } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
 
 import RightActions from './RightActions'
+import { Button } from '@react-navigation/elements'
 
 type Props = {
     name: string
     description: string
-    onUpdate: () => void
-    onDelete: () => void
+    onSelected: () => void
+    backgroundColor: string;
+    textColor: string;
 }
 
-export default function ListItem({ name, description, onUpdate, onDelete }: Props) {
+export default function ListRole({ name, description, onSelected, backgroundColor, textColor }: Props) {
     return (
-        <GestureHandlerRootView>
-            <Swipeable renderRightActions={() => <RightActions onUpdate={onUpdate} onDelete={onDelete} />}>
-                <View style={styles.itemContainer}>
-                    <Text style={styles.itemName}>{name} </Text>
-                    <Text style={styles.itemDescription}>{description}</Text>
-                </View>
-            </Swipeable>
-        </GestureHandlerRootView>
+        <View style={styles.itemContainer}>
+            <TouchableOpacity onPress={onSelected} style={[styles.item, { backgroundColor }]}>
+                <Text style={[styles.itemName, {color: textColor}]}>{name} </Text>
+                <Text style={styles.itemDescription}>{description}</Text>
+            </TouchableOpacity>
+        </View>
+        
+
     )
 }
 
@@ -41,5 +43,10 @@ const styles = StyleSheet.create({
     itemDescription: {
         color: '#555',
         fontWeight: 'bold',
+    },
+    item: {
+        padding: 20,
+        marginVertical: 8,
+        marginHorizontal: 16,
     },
 })

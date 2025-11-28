@@ -4,6 +4,8 @@ import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation
 import ListRole from '../../components/ListRole'
 import type { Role } from '../../model'
 import * as roleService from "../../services/role.service"
+import ListItem from '../../components/ListItem'
+import * as authRepo from '../../services/auth.repo'
 
 export default function ListRolePage() {
 
@@ -20,9 +22,21 @@ export default function ListRolePage() {
         })
     }
 
-    useFocusEffect(() => {
-        fetchRoles()
-    })
+    React.useEffect(() => {
+            navigation.addListener('focus', fetchRoles)
+            authRepo.getSession().then(session => {
+                if (!session) navigation.goBack()
+    
+                navigation.setOptions({
+                    title: session ? `Olá ${session.name}` : 'Página Inicial',
+                })
+            })
+    
+            navigation.setOptions({
+                headerLeft: () => <Button title='Sair' onPress={() => navigation.goBack()} />,
+                headerRight: () => <Button title='Add' onPress={() => navigation.navigate('user')} />
+            })
+        }, [])
 
     function update(role: Role) {
         navigation.navigate('home')
@@ -43,9 +57,9 @@ export default function ListRolePage() {
                     data={roles}
                     keyExtractor={role => role.id!.toString()}
                     renderItem={({ item }) => (
-                        <ListRole
-                            name={item.name}
-                            description={item.description}
+                        <ListItem
+                            title={item.name}
+                            subtitle={item.description}
                             onUpdate={() => update(item)}
                             onDelete={() => remove(item)}
                         />

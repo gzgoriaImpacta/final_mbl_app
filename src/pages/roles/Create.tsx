@@ -49,7 +49,7 @@ export default function RoleCreatePage() {
             const role: Role = { name, description }
 
             roleService.create(role).then(success => {
-                navigation.goBack()
+                navigation.navigate('home')
             }).catch(error => {
                 console.error('Erro ao criar usuário: ', error)
             })
@@ -69,6 +69,7 @@ export default function RoleCreatePage() {
             />
             <View style={styles.buttonContainer}>
                 <Button title="Salvar" onPress={save} />
+                <Button title="Cancelar" onPress={() => navigation.navigate('roles')} />
             </View>
         </View>
     );

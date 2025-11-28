@@ -20,8 +20,10 @@ export async function getList() {
     })
 
     if (response.ok) {
+        console.debug('Sucesso ao buscar roles')
         return await response.json() as Role[];
     }
+    console.debug('Erro ao buscar roles')
     throw new Error(await response.text())
 }
 

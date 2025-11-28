@@ -4,8 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import LoginPage from './src/pages/Login'
 import HomePage from './src/pages/Home'
 import UserPage from './src/pages/User'
-import ListRolesPage from './src/pages/roles/list'
-import RolePage from './src/pages/roles/create'
+import ListRolesPage from './src/pages/roles/List'
+import RolePage from './src/pages/roles/Create'
 
 const Stack = createNativeStackNavigator()
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Alert, Button, FlatList, StyleSheet, Text, View } from 'react-native'
-import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 
 import * as userService from '../services/user.service'
 import * as authRepo from '../services/auth.repo'
@@ -15,13 +15,11 @@ export default function HomePage() {
 
     function fetchUsers() {
         userService.getList().then(data => setUsers(data))
+
     }
 
-    useFocusEffect(() => {
-        fetchUsers()
-    })
-
     React.useEffect(() => {
+        navigation.addListener('focus', fetchUsers)
         authRepo.getSession().then(session => {
             if (!session) navigation.goBack()
 
@@ -59,6 +57,7 @@ export default function HomePage() {
                         <ListItem
                             title={item.name}
                             subtitle={item.username}
+                            roles={item.roles}
                             onUpdate={() => update(item)}
                             onDelete={() => remove(item)}
                         />

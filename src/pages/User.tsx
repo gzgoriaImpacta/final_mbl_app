@@ -1,11 +1,12 @@
 import React from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet,FlatList, Text, View } from "react-native";
 
 import * as service from '../services/user.service';
 import MyInput from '../components/MyInput';
 import { User } from "../model";
 import { Role } from "../model";
 import { NavigationProp, useNavigation, useRoute } from "@react-navigation/native";
+import ListRoles from "../components/ListRole";
 
 export default function UserPage() {
 
@@ -27,20 +28,13 @@ export default function UserPage() {
         navigation.setOptions({ title: user ? 'Editar Usuário' : 'Novo Usuário' })
     }, [])
 
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selecionadas = Array.from(event.target.selectedOptions).map(
-            (opt) => opt.value
-        )
-        setRoles(selecionadas)
-    }
-
     function save() {
         if (name === '') {
             alert('Nome é requerido!');
             return;
         }
         if (user) {
-            const editUser: User = { id: user.id, username, name }
+            const editUser: User = { id: user.id, username, name, roles }
 
             service.update(editUser).then(success => {
                 navigation.goBack()
@@ -62,7 +56,7 @@ export default function UserPage() {
                 return;
             }
         
-            const newUser: User = { username, name, password }
+            const newUser: User = { username, name, password, roles }
 
             service.create(newUser).then(success => {
                 navigation.goBack()
@@ -71,6 +65,21 @@ export default function UserPage() {
             })
         }
     }
+
+    const renderItem = ({ item }: { item: Role }) => {
+        const backgroundColor = listRoles.map(role => role.id === item.id) ? '#6e3b6e' : '#f9c2ff';
+        const color = listRoles.map(role => role.id === item.id) ? 'white' : 'black';
+
+        return (
+            <ListRoles
+                name={item.name}
+                description={item.description}
+                onSelected={() => setRoles(roles.concat(item.id!.toString()))}
+                backgroundColor={backgroundColor}
+                textColor={color}
+            />
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -82,9 +91,14 @@ export default function UserPage() {
                     <MyInput label="Senha" onChangeText={setPassword} secureTextEntry />
                     <MyInput label="Confirmar Senha" onChangeText={setConfirmPassword} secureTextEntry />
                 </>
-            ) }          
+            ) }
 
-
+            <FlatList style={styles.fletlist}
+                data={listRoles}
+                keyExtractor={role => role.id!.toString()}
+                renderItem={renderItem}
+                extraData={roles}
+            />
 
             <View style={styles.buttonContainer}>
                 <Button title="Salvar" onPress={save} />
@@ -103,7 +117,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         justifyContent: 'flex-start',
     },
+    fletlist: {
+        flex: 1,
+    },
     buttonContainer: {
+        flex: 1,
         width: '60%',
         marginTop: 20,
     },

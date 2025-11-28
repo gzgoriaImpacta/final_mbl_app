@@ -8,17 +8,19 @@ import RightActions from './RightActions'
 type Props = {
     title: string
     subtitle: string
+    roles?: string[]
     onUpdate: () => void
     onDelete: () => void
 }
 
-export default function ListItem({ title, subtitle, onUpdate, onDelete }: Props) {
+export default function ListItem({ title, subtitle, onUpdate, onDelete, roles }: Props) {
     return (
         <GestureHandlerRootView>
             <Swipeable renderRightActions={() => <RightActions onUpdate={onUpdate} onDelete={onDelete} />}>
                 <View style={styles.itemContainer}>
                     <Text style={styles.itemTitle}>{title} </Text>
                     <Text style={styles.itemSubtitle}>{subtitle}</Text>
+                    <Text style={styles.itemSubtitle}>{roles}</Text>
                 </View>
             </Swipeable>
         </GestureHandlerRootView>
