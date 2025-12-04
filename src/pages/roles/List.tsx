@@ -2,7 +2,7 @@ import React from 'react'
 import { Alert, Button, FlatList, StyleSheet, Text, View } from 'react-native'
 import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native'
 import ListRole from '../../components/ListRole'
-import type { Role } from '../../model'
+import type { Role } from '../../models/model.user'
 import * as roleService from "../../services/role.service"
 import ListItem from '../../components/ListItem'
 import * as authRepo from '../../services/auth.repo'
@@ -23,25 +23,25 @@ export default function ListRolePage() {
     }
 
     React.useEffect(() => {
-            navigation.addListener('focus', fetchRoles)
-            authRepo.getSession().then(session => {
-                if (!session) navigation.goBack()
-    
-                navigation.setOptions({
-                    title: session ? `Olá ${session.name}` : 'Página Inicial',
-                })
-            })
-    
+        navigation.addListener('focus', fetchRoles)
+        authRepo.getSession().then(session => {
+            if (!session) navigation.goBack()
+
             navigation.setOptions({
-                headerLeft: () => <Button title='Sair' onPress={() => navigation.goBack()} />,
-                headerRight: () => <Button title='Add' onPress={() => navigation.navigate('user')} />
+                title: session ? `Olá ${session.name}` : 'Página Inicial',
             })
-        }, [])
+        })
+
+        navigation.setOptions({
+            headerLeft: () => <Button title='Sair' onPress={() => navigation.goBack()} />,
+            headerRight: () => <Button title='Add' onPress={() => navigation.navigate('user')} />
+        })
+    }, [])
 
     function update(role: Role) {
         navigation.navigate('home')
     }
-    
+
     function remove(role: Role) {
         roleService.remove(role.id!).then(deleted => {
             if (deleted) fetchRoles()

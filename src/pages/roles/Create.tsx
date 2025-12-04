@@ -3,7 +3,7 @@ import { Button, StyleSheet, Text, View, Alert } from 'react-native';
 import { NavigationProp, useNavigation, useRoute } from "@react-navigation/native";
 import * as roleService from '../../services/role.service'
 import MyInput from '../../components/MyInput'
-import type { Role } from "../../model"
+import type { Role } from "../../models/model.user"
 
 export default function RoleCreatePage() {
     const navigation = useNavigation<NavigationProp<any>>()

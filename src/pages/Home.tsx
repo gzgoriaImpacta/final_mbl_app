@@ -5,7 +5,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import * as userService from '../services/user.service'
 import * as authRepo from '../services/auth.repo'
 import ListItem from '../components/ListItem'
-import { User } from '../model'
+import { User } from '../models/model.user'
 
 export default function HomePage() {
 

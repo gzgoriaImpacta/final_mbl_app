@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { User } from '../model';
+import { User } from '../models/model.user';
 
 const KEY = 'AUTH_APP@session';
 

@@ -1,8 +1,8 @@
-import type { Role } from "../model"
+import type { Role } from "../models/model.role"
 import * as repo from '../services/auth.repo'
 
 
-const URL_BASE = 'http://192.168.0.7:3030/roles'
+const URL_BASE = 'http://192.168.0.235:3030/roles'
 
 async function getHeaders() {
     const session = await repo.getSession();

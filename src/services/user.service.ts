@@ -1,7 +1,7 @@
 import * as repo from '../services/auth.repo'
-import { User } from "../model";
+import { User } from "../models/model.user";
 
-const URL_BASE = 'http://192.168.0.7:3030/users';
+const URL_BASE = 'http://192.168.0.235:3030/users';
 
 async function getHeaders() {
     const session = await repo.getSession();

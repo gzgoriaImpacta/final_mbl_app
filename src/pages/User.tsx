@@ -1,10 +1,11 @@
 import React from "react";
-import { Button, StyleSheet,FlatList, Text, View } from "react-native";
+import { Button, StyleSheet, FlatList, Text, View } from "react-native";
 
-import * as service from '../services/user.service';
+import * as userservice from '../services/user.service';
+import * as roleservice from '../services/role.service';
 import MyInput from '../components/MyInput';
-import { User } from "../model";
-import { Role } from "../model";
+import { User } from "../models/model.user";
+import { Role } from "../models/model.role";
 import { NavigationProp, useNavigation, useRoute } from "@react-navigation/native";
 import ListRoles from "../components/ListRole";
 
@@ -22,11 +23,20 @@ export default function UserPage() {
     const [password, setPassword] = React.useState('')
     const [confirmPassword, setConfirmPassword] = React.useState('')
     const [listRoles, setListRoles] = React.useState<Role[]>([])
-    const [roles, setRoles] = React.useState<string[]>([])
+    const [roles, setRoles] = React.useState<string[]>(user?.roles ?? []);
 
+    /*
     React.useEffect(() => {
         navigation.setOptions({ title: user ? 'Editar Usuário' : 'Novo Usuário' })
-    }, [])
+        roleservice.getList()
+    }, []);
+    */
+    React.useEffect(() => {
+        navigation.setOptions({ title: user ? 'Editar Usuário' : 'Novo Usuário' })
+        roleservice.getList()
+            .then(list => setListRoles(list))
+            .catch(err => console.error("Erro ao carregar roles", err));
+    }, []);
 
     function save() {
         if (name === '') {
@@ -36,7 +46,7 @@ export default function UserPage() {
         if (user) {
             const editUser: User = { id: user.id, username, name, roles }
 
-            service.update(editUser).then(success => {
+            userservice.update(editUser).then(success => {
                 navigation.goBack()
             }).catch(error => {
                 console.error('Erro ao alterar o usuário: ', error)
@@ -55,10 +65,10 @@ export default function UserPage() {
                 alert('Senhas não conferem!');
                 return;
             }
-        
+
             const newUser: User = { username, name, password, roles }
 
-            service.create(newUser).then(success => {
+            userservice.create(newUser).then(success => {
                 navigation.goBack()
             }).catch(error => {
                 console.error('Erro ao criar usuário: ', error)
@@ -67,16 +77,28 @@ export default function UserPage() {
     }
 
     const renderItem = ({ item }: { item: Role }) => {
-        const backgroundColor = listRoles.map(role => role.id === item.id) ? '#6e3b6e' : '#f9c2ff';
-        const color = listRoles.map(role => role.id === item.id) ? 'white' : 'black';
+        //const backgroundColor = listRoles.map(role => role.id === item.id) ? '#6e3b6e' : '#f9c2ff';
+        //const color = listRoles.map(role => role.id === item.id) ? 'white' : 'black';
+
+        const isSelected = roles.includes(item.id!.toString());
 
         return (
             <ListRoles
                 name={item.name}
                 description={item.description}
-                onSelected={() => setRoles(roles.concat(item.id!.toString()))}
-                backgroundColor={backgroundColor}
-                textColor={color}
+                //onSelected={() => setRoles(roles.concat(item.id!.toString()))}
+                //backgroundColor={backgroundColor}
+                //textColor={color}
+                onSelected={() => {
+                    if (!isSelected) {
+                        setRoles([...roles, item.id!.toString()]);
+                    } else {
+                        setRoles(roles.filter(r => r !== item.id!.toString()));
+                    }
+                }
+                }
+                backgroundColor={isSelected ? '#6e3b6e' : '#f9c2ff'}
+                textColor={isSelected ? 'white' : 'black'}
             />
         );
     };
@@ -86,12 +108,12 @@ export default function UserPage() {
             <MyInput label="Login" value={username} onChangeText={setUsername} readOnly={!!user} />
             <MyInput label="Nome" value={name} onChangeText={setName} />
 
-            { !user && (
+            {!user && (
                 <>
                     <MyInput label="Senha" onChangeText={setPassword} secureTextEntry />
                     <MyInput label="Confirmar Senha" onChangeText={setConfirmPassword} secureTextEntry />
                 </>
-            ) }
+            )}
 
             <FlatList style={styles.fletlist}
                 data={listRoles}
